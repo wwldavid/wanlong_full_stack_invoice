@@ -6,12 +6,12 @@ import { eq } from "drizzle-orm";
 
 type InvoicePageProps = {
   params: {
-    invoiceId: string;
+    invoiceid: string;
   };
 };
 
 export default async function InvoicePage({ params }: InvoicePageProps) {
-  const invoiceId = parseInt(params.invoiceId);
+  const invoiceId = parseInt(params.invoiceid);
 
   const [result] = await db
     .select()
