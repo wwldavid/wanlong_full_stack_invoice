@@ -4,25 +4,25 @@ import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 
-export default async function InvoicePage({
-  params,
-}: {
-  params: { invoiceId: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const invoiceId = parseInt(params.invoiceId);
+type PageParams = {
+  invoiceId: string;
+};
+
+export default async function InvoicePage(props: any) {
+  const { invoiceId } = props.params as PageParams;
+  const id = parseInt(invoiceId);
 
   const [result] = await db
     .select()
     .from(Invoices)
-    .where(eq(Invoices.id, invoiceId))
+    .where(eq(Invoices.id, id))
     .limit(1);
 
   return (
     <main className=" h-full  max-w-2xl mx-auto gap-8 my-12">
       <div className="flex justify-between mb-8">
         <h1 className="flex items-center gap-4 text-5xl font-bold">
-          Invoice {invoiceId}
+          Invoice {id}
           <Badge
             className={cn(
               "rounded-full capitalize",
@@ -45,7 +45,7 @@ export default async function InvoicePage({
           <strong className="block w-28 flex-shrink-0 font-medium text-sm">
             Invoice ID
           </strong>
-          <span>{invoiceId}</span>
+          <span>{id}</span>
         </li>
         <li className="flex gap-4">
           <strong className="block w-28 flex-shrink-0 font-medium text-sm">
