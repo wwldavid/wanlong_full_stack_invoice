@@ -4,13 +4,15 @@ import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 
-type PageParams = {
-  invoiceId: string;
-};
+interface InvoicePageProps {
+  params: {
+    invoiceId: string;
+  };
+  searchParams?: Record<string, string | string[] | undefined>;
+}
 
-export default async function InvoicePage(props: any) {
-  const { invoiceId } = props.params as PageParams;
-  const id = parseInt(invoiceId);
+export default async function InvoicePage({ params }: InvoicePageProps) {
+  const id = parseInt(params.invoiceId);
 
   const [result] = await db
     .select()
