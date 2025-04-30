@@ -3,12 +3,11 @@ import { db } from "@/db";
 import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
+import { type PageProps } from "next";
 
 export default async function InvoicePage({
   params,
-}: {
-  params: { invoiceId: string };
-}) {
+}: PageProps<{ invoiceId: string }>) {
   const invoiceId = parseInt(params.invoiceId);
 
   const [result] = await db
