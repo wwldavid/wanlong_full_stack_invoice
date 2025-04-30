@@ -1,15 +1,18 @@
+export const dynamic = "force-dynamic";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/db";
 import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 
-export default async function InvoicePage({
-  params,
-}: {
-  params: { invoiceId: string };
-}) {
-  const invoiceId = parseInt(params.invoiceId);
+type InvoicePageProps = {
+  params: {
+    invoiceid: string;
+  };
+};
+
+export default async function InvoicePage({ params }: InvoicePageProps) {
+  const invoiceId = parseInt(params.invoiceid);
 
   const [result] = await db
     .select()
