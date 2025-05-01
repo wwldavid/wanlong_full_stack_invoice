@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/db";
@@ -11,11 +12,19 @@ export default async function InvoicePage({ params }: { params: Params }) {
   const { invoiceid } = await params;
   const invoiceId = parseInt(invoiceid);
 
+  if (isNaN(invoiceId)) {
+    throw new Error("Invalid Invoice ID");
+  }
+
   const [result] = await db
     .select()
     .from(Invoices)
     .where(eq(Invoices.id, invoiceId))
     .limit(1);
+
+  if (!result) {
+    notFound();
+  }
 
   return (
     <main className=" h-full  max-w-2xl mx-auto gap-8 my-12">
