@@ -4,11 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { db } from "@/db";
 import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
 
 type Params = Promise<{ invoiceid: string }>;
 
 export default async function InvoicePage({ params }: { params: Params }) {
+  const { userId } = await auth();
+  if (!userId) return;
   const { invoiceid } = await params;
   const invoiceId = parseInt(invoiceid);
 
@@ -19,7 +22,7 @@ export default async function InvoicePage({ params }: { params: Params }) {
   const [result] = await db
     .select()
     .from(Invoices)
-    .where(eq(Invoices.id, invoiceId))
+    .where(and(eq(Invoices.id, invoiceId), eq(Invoices.userId, userId)))
     .limit(1);
 
   if (!result) {
