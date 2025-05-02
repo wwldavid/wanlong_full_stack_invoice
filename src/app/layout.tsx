@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -16,7 +18,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="antialiased">{children}</body>
+        <body className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto]">
+          <Header />
+          {children}
+          <Footer />
+        </body>
       </html>
     </ClerkProvider>
   );
