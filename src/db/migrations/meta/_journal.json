@@ -22,6 +22,13 @@
       "when": 1746284800235,
       "tag": "0002_first_joystick",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1746294579617,
+      "tag": "0003_aberrant_revanche",
+      "breakpoints": true
     }
   ]
 }
