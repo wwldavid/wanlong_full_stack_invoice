@@ -4,7 +4,7 @@ import { useOptimistic } from "react";
 
 import { Badge } from "@/components/ui/badge";
 
-import { Invoices } from "@/db/schema";
+import { Customers, Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 
 import Container from "@/components/container";
@@ -32,7 +32,9 @@ import {
 } from "@/components/ui/dialog";
 
 interface InvoiceProps {
-  invoice: typeof Invoices.$inferSelect;
+  invoice: typeof Invoices.$inferSelect & {
+    customer: typeof Customers.$inferSelect;
+  };
 }
 
 export default function Invoice({ invoice }: InvoiceProps) {
@@ -98,7 +100,7 @@ export default function Invoice({ invoice }: InvoiceProps) {
                 <DropdownMenuTrigger asChild>
                   <Button className="flex items-center gap-2" variant="outline">
                     <span className="sr-only">More Options</span>
-                    <Ellipsis childrenw-4 h-auto />
+                    <Ellipsis className="w-4 h-auto" />
                     <ChevronDown className="w-4 h-auto" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -160,13 +162,13 @@ export default function Invoice({ invoice }: InvoiceProps) {
             <strong className="block w-28 flex-shrink-0 font-medium text-sm">
               Invoice Name
             </strong>
-            <span></span>
+            <span>{invoice.customer.name}</span>
           </li>
           <li className="flex gap-4">
             <strong className="block w-28 flex-shrink-0 font-medium text-sm">
               Invoice Email
             </strong>
-            <span></span>
+            <span>{invoice.customer.email}</span>
           </li>
         </ul>
       </Container>
