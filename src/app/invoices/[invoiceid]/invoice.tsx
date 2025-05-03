@@ -37,7 +37,7 @@ export default function Invoice({ invoice }: InvoiceProps) {
     setCurrentStatus(formData.get("status"));
     try {
       await updateStatusAction(formData);
-    } catch (e) {
+    } catch () {
       setCurrentStatus(originalStatus);
     }
   }
