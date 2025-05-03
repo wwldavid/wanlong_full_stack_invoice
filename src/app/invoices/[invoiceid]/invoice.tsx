@@ -98,7 +98,7 @@ export default function Invoice({ invoice }: InvoiceProps) {
                 <DropdownMenuTrigger asChild>
                   <Button className="flex items-center gap-2" variant="outline">
                     <span className="sr-only">More Options</span>
-                    <Ellipsis childrenw-4 h-auto />
+                    <Ellipsis className="w-4 h-auto" />
                     <ChevronDown className="w-4 h-auto" />
                   </Button>
                 </DropdownMenuTrigger>
