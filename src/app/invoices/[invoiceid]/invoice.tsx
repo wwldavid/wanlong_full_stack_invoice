@@ -15,10 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 
 import { AVAILABLE_STATUSES } from "@/data/invoices";
-import { updateStatusAction } from "@/app/actions";
+import { updateStatusAction, deleteInvoiceAction } from "@/app/actions";
+import { Ellipsis } from "lucide-react";
 
 interface InvoiceProps {
   invoice: typeof Invoices.$inferSelect;
@@ -59,27 +60,49 @@ export default function Invoice({ invoice }: InvoiceProps) {
               {currentStatus}
             </Badge>
           </h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="flex items-center gap-2" variant="outline">
-                Change Status
-                <ChevronDown className="w-4 h-auto" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {AVAILABLE_STATUSES.map((status) => {
-                return (
-                  <DropdownMenuItem key={status.id}>
-                    <form action={handleOnUpstateStatus}>
-                      <input type="hidden" name="id" value={invoice.id} />
-                      <input type="hidden" name="status" value={status.id} />
-                      <button>{status.label}</button>
-                    </form>
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex items-center gap-2" variant="outline">
+                  Change Status
+                  <ChevronDown className="w-4 h-auto" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {AVAILABLE_STATUSES.map((status) => {
+                  return (
+                    <DropdownMenuItem key={status.id}>
+                      <form action={handleOnUpstateStatus}>
+                        <input type="hidden" name="id" value={invoice.id} />
+                        <input type="hidden" name="status" value={status.id} />
+                        <button>{status.label}</button>
+                      </form>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="flex items-center gap-2" variant="outline">
+                  <span className="sr-only">More Options</span>
+                  <Ellipsis childrenw-4 h-auto />
+                  <ChevronDown className="w-4 h-auto" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <form action={deleteInvoiceAction}>
+                    <input type="hidden" name="id" value={invoice.id} />
+                    <button className="flex items-center gap-2">
+                      <Trash2 className="w-4 h-auto" />
+                      Delete Invoice
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         <p className="text-3xl mb-3">${(invoice.value / 100).toFixed(2)}</p>
         <p className="text-lg mb-8">{invoice.description}</p>
