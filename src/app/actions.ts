@@ -10,7 +10,7 @@ import { db } from "@/db";
 import { and, eq, isNull } from "drizzle-orm";
 
 import Stripe from "stripe";
-import { log } from "console";
+
 import { headers } from "next/headers";
 const stripe = new Stripe(String(process.env.STRIPE_API_SECRET));
 
