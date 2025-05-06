@@ -11,15 +11,36 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard } from "lucide-react";
 import { createPayment } from "@/app/actions";
+import { UpDateStatusClient } from "@/components/UpdateStatusClient";
 
 type Params = Promise<{ invoiceid: string }>;
+type SearchParams = Promise<{ status: string }>;
 
-export default async function InvoicePage({ params }: { params: Params }) {
+interface InvoicePageProps {
+  params: Params;
+  searchParams: SearchParams;
+}
+
+export default async function InvoicePage({
+  params,
+  searchParams,
+}: InvoicePageProps) {
   const { invoiceid } = await params;
+  const { status } = await searchParams;
   const invoiceId = parseInt(invoiceid);
+
+  const isSuccess = status === "success";
+  const isCanceled = status === "canceled";
+
+  console.log("isSuccess", isSuccess);
+  console.log("isCanceled", isCanceled);
 
   if (isNaN(invoiceId)) {
     throw new Error("Invalid Invoice ID");
+  }
+
+  if (isSuccess) {
+    return <UpDateStatusClient invoiceId={invoiceId} />;
   }
 
   const [result] = await db

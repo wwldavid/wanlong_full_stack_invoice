@@ -132,8 +132,8 @@ export async function createPayment(formData: FormData) {
       },
     ],
     mode: "payment",
-    success_url: `${origin}/invoices/${id}/payment?success=true`,
-    cancel_url: `${origin}/invoices/${id}/payment?canceled=true`,
+    success_url: `${origin}/invoices/${id}/payment?status=success`,
+    cancel_url: `${origin}/invoices/${id}/payment?status=canceled`,
   });
 
   if (!session.url) {
