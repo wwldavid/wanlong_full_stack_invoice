@@ -1,10 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-
 import { Customers, Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
-
 import Container from "@/components/container";
-
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -12,9 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Check, CreditCard } from "lucide-react";
 import { createPayment } from "@/app/actions";
 import { UpDateStatusClient } from "@/components/UpdateStatusClient";
+import Stripe from "stripe";
+const stripe = new Stripe(String(process.env.STRIPE_API_SECRET));
 
 type Params = Promise<{ invoiceid: string }>;
-type SearchParams = Promise<{ status: string }>;
+type SearchParams = Promise<{ status?: string; session_id?: string }>;
 
 interface InvoicePageProps {
   params: Params;
@@ -26,23 +25,44 @@ export default async function InvoicePage({
   searchParams,
 }: InvoicePageProps) {
   const { invoiceid } = await params;
-  const { status } = await searchParams;
   const invoiceId = parseInt(invoiceid);
-
-  const isSuccess = status === "success";
-  const isCanceled = status === "canceled";
-
-  console.log("isSuccess", isSuccess);
-  console.log("isCanceled", isCanceled);
 
   if (isNaN(invoiceId)) {
     throw new Error("Invalid Invoice ID");
   }
 
-  if (isSuccess) {
-    return <UpDateStatusClient invoiceId={invoiceId} />;
+  // 安全地解析 URL 参数
+  const searchParamsData = await searchParams;
+  const status = searchParamsData?.status || "";
+  const sessionId = searchParamsData?.session_id || "";
+
+  // 定义状态变量
+  let paymentStatus = "";
+  let isError = false;
+  let isCanceled = false;
+
+  if (sessionId) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      paymentStatus = session.payment_status || "";
+
+      // 如果支付成功，直接更新状态
+      if (paymentStatus === "paid") {
+        return <UpDateStatusClient invoiceId={invoiceId} />;
+      } else if (status === "success" && paymentStatus !== "paid") {
+        // 如果状态为成功但支付状态不是paid，显示错误
+        isError = true;
+      }
+    } catch (error) {
+      console.error("Error retrieving Stripe session:", error);
+      isError = true;
+    }
+  } else if (status === "canceled") {
+    // 如果状态为canceled，设置isCanceled为true
+    isCanceled = true;
   }
 
+  // 获取发票数据
   const [result] = await db
     .select({
       id: Invoices.id,
@@ -71,6 +91,27 @@ export default async function InvoicePage({
   return (
     <main className="w-full h-full">
       <Container>
+        {isError && (
+          <p className="bg-red-100 text-red-800 text-center px-3 py-2 rounded-lg mb-6">
+            Something went wrong with the payment. Please try again.
+          </p>
+        )}
+        {isCanceled && (
+          <p className="bg-yellow-100 text-yellow-800 text-center px-3 py-2 rounded-lg mb-6">
+            Payment was canceled.
+          </p>
+        )}
+
+        {invoice.status === "paid" && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
+            <p className="flex items-center gap-2 text-green-700 font-medium">
+              <Check className="w-5 h-5 text-green-600" />
+              Payment processed successfully! Your invoice has been marked as
+              paid.
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-2">
           <div>
             <div className="flex justify-between mb-8">
