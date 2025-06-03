@@ -18,7 +18,8 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="antialiased min-h-screen grid grid-rows-[auto_1fr_auto]">
+        <body className="relative antialiased min-h-screen grid grid-rows-[auto_1fr_auto] bg-custom">
+          <div className="absolute inset-0 bg-white/60  -z-10" />
           <Header />
           {children}
           <Footer />
